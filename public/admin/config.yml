@@ -6,6 +6,7 @@ backend:
   name: github
   repo: theGBguy/sana-closet
   branch: main
+  base_url: https://sveltia-cms-auth.properpdf.workers.dev
   commit_messages:
     create: 'Add {{collection}} “{{slug}}”'
     update: 'Update {{collection}} “{{slug}}”'
