@@ -1,0 +1,8 @@
+---
+// Renders a title with one word/phrase in italics, e.g. "Minimal <em>chic</em>".
+interface Props { text: string; italic?: string | null }
+const { text, italic } = Astro.props;
+const i = italic ? text.toLowerCase().lastIndexOf(italic.toLowerCase()) : -1;
+const parts = i >= 0 ? [text.slice(0, i), text.slice(i, i + italic!.length), text.slice(i + italic!.length)] : [text, '', ''];
+---
+{parts[0]}{parts[1] && <em>{parts[1]}</em>}{parts[2]}

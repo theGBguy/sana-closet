@@ -1,0 +1,184 @@
+---
+import '../styles/global.css';
+import Heart from '../components/Heart.astro';
+import { url } from '../lib/data';
+
+interface Props { title?: string; description?: string; image?: string; intro?: boolean }
+const {
+  title,
+  description = 'Budget finds that look way more expensive. Outfits, beauty and home finds curated by Sana.',
+  image,
+  intro = false,
+} = Astro.props;
+const fullTitle = title ? `${title} · SANA` : 'SANA · Style, Beauty & Finds';
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = image ? new URL(url(image), Astro.site).href : undefined;
+const BASE = url('/');
+---
+<!doctype html>
+<html lang="en-AU" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  {ogImage && <meta property="og:image" content={ogImage} />}
+  <meta name="theme-color" content="#F6F1EA" />
+  <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+  <script is:inline>document.documentElement.classList.remove('no-js');</script>
+  {intro && (
+    <script is:inline>
+      /* Door intro: home page, first visit, motion allowed (or ?intro to force). Decided before first paint. */
+      (function () { try {
+        var force = /[?&]intro\b/.test(location.search);
+        if (force || (!localStorage.getItem('sana-doors-seen') && !matchMedia('(prefers-reduced-motion: reduce)').matches))
+          document.documentElement.classList.add('doors-on');
+      } catch (e) {} })();
+    </script>
+  )}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body data-base={BASE}>
+  {intro && (
+    <div class="doors" id="doors" aria-hidden="true">
+      <div class="door l"><div class="mark"><b>SANA</b><span class="label muted">The Closet</span></div><i class="knob"></i></div>
+      <div class="door r"><div class="mark"><b>SANA</b><span class="label muted">The Closet</span></div><i class="knob"></i></div>
+      <div class="skip label">Tap to open</div>
+    </div>
+  )}
+
+  <header class="top" id="top">
+    <div class="wrap bar">
+      <a href={BASE} class="word" aria-label="SANA home">SANA</a>
+      <button class="closet-btn" id="openCloset" type="button" aria-label="My closet">
+        <span class="label">My Closet</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"/></svg>
+        <span class="count" id="count">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main><slot /></main>
+
+  <footer>
+    <div class="wrap">
+      <div class="word">SANA</div>
+      <div class="row">
+        <a href="https://www.pinterest.com/sanastylebeauty/" target="_blank" rel="noopener">Pinterest</a>
+        <a href={url('/shop/')}>Shop all</a>
+        <a href={url('/edit/under-30/')}>Under $30</a>
+        {intro && <a href="#" id="replay">Replay intro</a>}
+      </div>
+      <p>As an Amazon Associate I earn from qualifying purchases. Links on this site go to Amazon.com.au; I may earn a small commission at no extra cost to you.</p>
+      <p>Price bands are a guide. The current price is the one shown on Amazon.</p>
+    </div>
+  </footer>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2 id="sheetTitle">My <em>closet</em></h2>
+      <button class="label" id="closeCloset" type="button" style="height:44px">Close</button>
+    </div>
+    <div id="savedList"></div>
+  </aside>
+
+  <script>
+    const BASE = document.body.dataset.base || '/';
+    const KEY = 'sana-closet';
+    const heart = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"/></svg>';
+    let saved: string[] = [];
+    try { saved = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch {}
+    const esc = (s: string) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+    const asset = (p: string) => (/^https?:/.test(p) ? p : BASE.replace(/\/$/, '') + p);
+
+    function syncButtons() {
+      document.querySelectorAll<HTMLElement>('[data-save]').forEach((b) => b.setAttribute('aria-pressed', String(saved.includes(b.dataset.save!))));
+      document.getElementById('count')!.textContent = String(saved.length);
+    }
+    function toggle(k: string, btn?: HTMLElement) {
+      saved = saved.includes(k) ? saved.filter((x) => x !== k) : [...saved, k];
+      localStorage.setItem(KEY, JSON.stringify(saved));
+      syncButtons();
+      if (btn) { btn.classList.add('pop'); setTimeout(() => btn.classList.remove('pop'), 220); }
+      if (sheet.classList.contains('show')) renderSaved();
+    }
+
+    type Data = { looks: Record<string, { t: string; img: string; url: string }>; products: Record<string, { t: string; img?: string; band: string; link: string }> };
+    let data: Data | null = null;
+    async function loadData() {
+      if (!data) data = await fetch(BASE + 'closet-data.json').then((r) => r.json());
+      return data!;
+    }
+    async function renderSaved() {
+      const el = document.getElementById('savedList')!;
+      if (!saved.length) {
+        el.innerHTML = '<div class="empty"><b>Nothing saved yet.</b>Tap the heart on a look or a piece and it will wait for you here, on this device.</div>';
+        return;
+      }
+      const d = await loadData();
+      el.innerHTML = saved.map((k) => {
+        const [type, id] = k.split(':');
+        if (type === 'look') {
+          const L = d.looks[id]; if (!L) return '';
+          return `<div class="saved"><div class="th"><img src="${asset(L.img)}" alt=""></div><div><span class="label muted">Look</span><h3>${esc(L.t)}</h3><div class="row"><a class="label view" href="${asset(L.url)}">View look</a><button class="rm" type="button" data-save="${k}">Remove</button></div></div></div>`;
+        }
+        const p = d.products[id]; if (!p) return '';
+        const th = p.img ? `<img src="${asset(p.img)}" alt="">` : esc(p.t.charAt(0));
+        return `<div class="saved"><div class="th">${th}</div><div><span class="label muted">${esc(p.band)}</span><h3>${esc(p.t)}</h3><div class="row"><a class="shop" style="height:36px;padding:0 14px" href="${esc(p.link)}" target="_blank" rel="nofollow sponsored noopener">Shop ↗</a><button class="rm" type="button" data-save="${k}">Remove</button></div></div></div>`;
+      }).join('');
+    }
+
+    const sheet = document.getElementById('sheet')!;
+    const scrim = document.getElementById('scrim')!;
+    const openCloset = () => { renderSaved(); sheet.classList.add('show'); scrim.classList.add('show'); };
+    const closeCloset = () => { sheet.classList.remove('show'); scrim.classList.remove('show'); };
+    document.getElementById('openCloset')!.addEventListener('click', openCloset);
+    document.getElementById('closeCloset')!.addEventListener('click', closeCloset);
+    scrim.addEventListener('click', closeCloset);
+    addEventListener('keydown', (e) => { if (e.key === 'Escape') closeCloset(); });
+
+    document.addEventListener('click', (e) => {
+      const s = (e.target as HTMLElement).closest<HTMLElement>('[data-save]');
+      if (s) { e.preventDefault(); e.stopPropagation(); toggle(s.dataset.save!, s); }
+    });
+    addEventListener('scroll', () => document.getElementById('top')!.classList.toggle('scrolled', scrollY > 8), { passive: true });
+    syncButtons();
+
+    // Reveal-on-scroll + rail sway
+    const io = new IntersectionObserver((es) => es.forEach((en) => {
+      if (en.isIntersecting) { const t = en.target as HTMLElement; t.classList.add(t.classList.contains('hang') ? 'sway' : 'in'); io.unobserve(t); }
+    }), { rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    document.querySelectorAll<HTMLElement>('.hang').forEach((el, i) => { el.style.animationDelay = (i % 4) * 90 + 'ms'; io.observe(el); });
+
+    // Door intro
+    const root = document.documentElement;
+    const doors = document.getElementById('doors');
+    function playDoors() {
+      if (!doors || !root.classList.contains('doors-on')) return;
+      doors.classList.remove('open', 'gone');
+      scrollTo(0, 0);
+      let done = false;
+      const open = () => {
+        if (done) return; done = true;
+        doors.classList.add('open');
+        try { localStorage.setItem('sana-doors-seen', '1'); } catch {}
+        setTimeout(() => doors.classList.add('gone'), 720);
+        setTimeout(() => { root.classList.remove('doors-on'); doors.classList.remove('open', 'gone'); }, 1000);
+      };
+      doors.onclick = open;
+      setTimeout(open, 450);
+    }
+    playDoors();
+    document.getElementById('replay')?.addEventListener('click', (e) => { e.preventDefault(); root.classList.add('doors-on'); setTimeout(playDoors, 30); });
+  </script>
+</body>
+</html>

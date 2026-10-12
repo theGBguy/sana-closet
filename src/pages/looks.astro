@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import LookCard from '../components/LookCard.astro';
+import { getLooks, url } from '../lib/data';
+const looks = await getLooks();
+---
+<Base title="All looks">
+  <div class="wrap"><a class="crumb label" href={url('/')}>← The closet</a></div>
+  <section class="wrap page-head">
+    <span class="label muted">{looks.length} looks</span>
+    <h1>Every <em>look</em></h1>
+  </section>
+  <section class="wrap"><div class="masonry">{looks.map((l, i) => <LookCard look={l} eager={i < 4} />)}</div></section>
+</Base>

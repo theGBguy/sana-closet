@@ -1,0 +1,41 @@
+---
+import Base from '../../layouts/Base.astro';
+import LookCard from '../../components/LookCard.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import Title from '../../components/Title.astro';
+import { getEdits, editContents, under30, url, type ResolvedLook, type Product } from '../../lib/data';
+
+export async function getStaticPaths() {
+  const edits = await getEdits();
+  const paths = await Promise.all(edits.map(async (e) => ({
+    params: { slug: e.id },
+    props: { title: e.data.title, italic: e.data.italic, cover: e.data.cover, ...(await editContents(e.data.tag)) },
+  })));
+  // Automatic edit built from price bands
+  paths.push({ params: { slug: 'under-30' }, props: { title: 'Under $30', italic: '$30', cover: undefined as unknown as string, ...(await under30()) } });
+  return paths;
+}
+interface Props { title: string; italic?: string | null; cover?: string; looks: ResolvedLook[]; products: Product[] }
+const { title, italic, cover, looks, products } = Astro.props;
+// Products already shown inside a look on this page are still listed: people shop pieces directly.
+---
+<Base title={title} image={cover ?? looks[0]?.data.photos[0]}>
+  <div class="wrap"><a class="crumb label" href={url('/')}>← The closet</a></div>
+  <section class="wrap page-head">
+    <span class="label muted">The edit</span>
+    <h1><Title text={title} italic={italic} /></h1>
+  </section>
+  {looks.length > 0 && (
+    <section class="wrap sec" style="padding-top:0">
+      <div class="sec-head"><h2>The <em>looks</em></h2><span class="label muted">{looks.length}</span></div>
+      <div class="masonry">{looks.map((l, i) => <LookCard look={l} eager={i < 4} />)}</div>
+    </section>
+  )}
+  {products.length > 0 && (
+    <section class="wrap sec">
+      <div class="sec-head"><h2>The <em>pieces</em></h2><span class="label muted">{products.length}</span></div>
+      <div class="products">{[...products].sort((a, b) => Number(!!b.data.photo) - Number(!!a.data.photo)).map((p) => <ProductCard product={p} />)}</div>
+    </section>
+  )}
+  {!looks.length && !products.length && <p class="wrap empty-note">New finds are on their way.</p>}
+</Base>

@@ -1,0 +1,16 @@
+---
+import Heart from './Heart.astro';
+import { url, type ResolvedLook } from '../lib/data';
+interface Props { look: ResolvedLook; eager?: boolean }
+const { look, eager = false } = Astro.props;
+const n = look.items.length;
+---
+<a class="look reveal" href={url(`/look/${look.id}/`)}>
+  <div class="ph">
+    <img src={url(look.data.photos[0])} alt={look.data.title} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    {look.band && <span class="tag">{look.band}</span>}
+  </div>
+  <button class="heart" type="button" data-save={`look:${look.id}`} aria-pressed="false" aria-label={`Save ${look.data.title}`}><Heart /></button>
+  <h3>{look.data.title}</h3>
+  <div class="meta">{look.data.occasion}{n > 0 && ` · ${n} piece${n > 1 ? 's' : ''}`}</div>
+</a>

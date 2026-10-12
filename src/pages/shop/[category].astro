@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { getProducts, url, CATEGORIES, categorySlug, type Product } from '../../lib/data';
+
+export async function getStaticPaths() {
+  const products = await getProducts();
+  return CATEGORIES.map((c) => ({ params: { category: categorySlug(c) }, props: { name: c, items: products.filter((p) => p.data.category === c) } }));
+}
+interface Props { name: string; items: Product[] }
+const { name, items } = Astro.props;
+// Products with photos first
+const sorted = [...items].sort((a, b) => Number(!!b.data.photo) - Number(!!a.data.photo));
+---
+<Base title={name} description={`${name} that look way more expensive, linked on Amazon AU.`}>
+  <div class="wrap"><a class="crumb label" href={url('/shop/')}>← Shop all</a></div>
+  <section class="wrap page-head">
+    <span class="label muted">{items.length} finds</span>
+    <h1><em>{name}</em></h1>
+  </section>
+  <section class="wrap">
+    {sorted.length ? <div class="products">{sorted.map((p) => <ProductCard product={p} />)}</div> : <p class="empty-note">New finds are on their way.</p>}
+  </section>
+</Base>

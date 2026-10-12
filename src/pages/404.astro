@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/data';
+---
+<Base title="Not found">
+  <section class="wrap page-head" style="min-height:50vh">
+    <span class="label muted">404</span>
+    <h1>This hanger is <em>empty.</em></h1>
+    <p>The look may have moved. <a href={url('/')} style="border-bottom:1px solid var(--ink)">Back to the closet</a></p>
+  </section>
+</Base>

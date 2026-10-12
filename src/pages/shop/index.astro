@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { getProducts, url, CATEGORIES, categorySlug } from '../../lib/data';
+const products = await getProducts();
+const groups = CATEGORIES.map((c) => ({ name: c, items: products.filter((p) => p.data.category === c) })).filter((g) => g.items.length);
+---
+<Base title="Shop all" description="Every budget find, by type, linked on Amazon AU.">
+  <div class="wrap"><a class="crumb label" href={url('/')}>← The closet</a></div>
+  <section class="wrap page-head">
+    <span class="label muted">{products.length} finds</span>
+    <h1>Shop <em>all</em></h1>
+    <nav class="jump label" aria-label="Categories" style="margin-top:14px">
+      {groups.map((g) => <a href={url(`/shop/${categorySlug(g.name)}/`)}>{g.name}</a>)}
+    </nav>
+  </section>
+  {groups.map((g) => (
+    <section class="wrap sec">
+      <div class="sec-head"><h2>{g.name}</h2><a class="label" href={url(`/shop/${categorySlug(g.name)}/`)}>View {g.items.length}</a></div>
+      <div class="products">{g.items.slice(0, 4).map((p) => <ProductCard product={p} />)}</div>
+    </section>
+  ))}
+</Base>

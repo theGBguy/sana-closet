@@ -1,0 +1,69 @@
+---
+import Base from '../layouts/Base.astro';
+import LookCard from '../components/LookCard.astro';
+import Title from '../components/Title.astro';
+import { getLooks, getProducts, getEdits, url, OCCASIONS, CATEGORIES, occasionSlug, categorySlug } from '../lib/data';
+
+const looks = await getLooks();
+const products = await getProducts();
+const edits = await getEdits();
+const latest = looks.slice(0, 12);
+
+// Occasion rail: every occasion with at least one look, cover = its newest look
+const occasions = OCCASIONS.map((o) => ({ name: o, cover: looks.find((l) => l.data.occasion === o) })).filter((o) => o.cover);
+const categories = CATEGORIES.map((c) => ({ name: c, n: products.filter((p) => p.data.category === c).length })).filter((c) => c.n);
+const cheapCover = looks.find((l) => l.band.includes('$20') || l.band.includes('$30'));
+const hanger = '<svg viewBox="0 0 72 34" fill="none" stroke="#6B5A4D" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M36 13c0-3 3-3.5 3-6.2A3 3 0 0 0 33.2 6"/><path d="M36 13 4 31h64z" stroke-linejoin="round"/></svg>';
+---
+<Base intro image={latest[0]?.data.photos[0]}>
+  <section class="wrap intro">
+    <span class="label muted">Style · Beauty · Home</span>
+    <h1>Budget finds that look <em>way more expensive.</em></h1>
+    <nav class="jump label" aria-label="Jump to">
+      <a href="#new">New in</a><a href="#occasion">Occasions</a><a href="#shelves">Shop by type</a><a href="#edits">Edits</a>
+    </nav>
+  </section>
+
+  <section class="wrap sec" id="new" style="padding-top:6px">
+    <div class="sec-head"><h2>New in the <em>closet</em></h2><a class="label" href={url('/looks/')}>See all</a></div>
+    <div class="masonry">{latest.map((l, i) => <LookCard look={l} eager={i < 4} />)}</div>
+  </section>
+
+  <section class="wrap sec" id="occasion">
+    <div class="sec-head"><h2>Dressing <em>for</em>…</h2><span class="label muted">Swipe</span></div>
+    <div class="rail-wrap"><div class="rail">
+      {occasions.map((o) => (
+        <a class="hang" href={url(`/occasion/${occasionSlug(o.name)}/`)}>
+          <span set:html={hanger} />
+          <div class="ph"><img src={url(o.cover!.data.photos[0])} alt="" loading="lazy" /></div>
+          <h3>{o.name}</h3>
+        </a>
+      ))}
+    </div></div>
+  </section>
+
+  <section class="wrap sec" id="shelves">
+    <div class="sec-head"><h2>Shop by <em>type</em></h2><a class="label" href={url('/shop/')}>Shop all</a></div>
+    <nav class="shelf">
+      {categories.map((c) => <a href={url(`/shop/${categorySlug(c.name)}/`)}>{c.name}<span>→</span></a>)}
+    </nav>
+  </section>
+
+  <section class="wrap sec" id="edits">
+    <div class="sec-head"><h2>The <em>edits</em></h2></div>
+    <div class="edits">
+      {cheapCover && (
+        <a class="edit reveal" href={url('/edit/under-30/')}>
+          <img src={url(cheapCover.data.photos[0])} alt="" loading="lazy" />
+          <div class="cap"><b>Under <em>$30</em></b><span class="label">Shop the edit</span></div>
+        </a>
+      )}
+      {edits.map((e) => (
+        <a class="edit reveal" href={url(`/edit/${e.id}/`)}>
+          <img src={url(e.data.cover)} alt="" loading="lazy" />
+          <div class="cap"><b><Title text={e.data.title} italic={e.data.italic} /></b><span class="label">Shop the edit</span></div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>

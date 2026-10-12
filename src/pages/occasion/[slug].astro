@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import LookCard from '../../components/LookCard.astro';
+import { getLooks, url, OCCASIONS, occasionSlug, type ResolvedLook } from '../../lib/data';
+
+export async function getStaticPaths() {
+  const looks = await getLooks();
+  return OCCASIONS.map((o) => ({ params: { slug: occasionSlug(o) }, props: { name: o, looks: looks.filter((l) => l.data.occasion === o) } }));
+}
+interface Props { name: string; looks: ResolvedLook[] }
+const { name, looks } = Astro.props;
+---
+<Base title={`${name} outfits`} description={`${name} outfit ideas with every piece linked on Amazon AU.`} image={looks[0]?.data.photos[0]}>
+  <div class="wrap"><a class="crumb label" href={url('/')}>← The closet</a></div>
+  <section class="wrap page-head">
+    <span class="label muted">Dressing for</span>
+    <h1><em>{name}</em></h1>
+  </section>
+  <section class="wrap">
+    {looks.length ? <div class="masonry">{looks.map((l, i) => <LookCard look={l} eager={i < 4} />)}</div> : <p class="empty-note">New looks are on their way.</p>}
+  </section>
+</Base>

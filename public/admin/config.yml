@@ -1,0 +1,172 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+# Sana's closet admin. Opens at https://thegbguy.github.io/sana-closet/admin/
+# Option lists (price bands, categories, occasions) must match src/lib/constants.ts
+
+backend:
+  name: github
+  repo: theGBguy/sana-closet
+  branch: main
+  commit_messages:
+    create: 'Add {{collection}} “{{slug}}”'
+    update: 'Update {{collection}} “{{slug}}”'
+    delete: 'Remove {{collection}} “{{slug}}”'
+    uploadMedia: 'Upload “{{path}}”'
+    deleteMedia: 'Delete “{{path}}”'
+
+site_url: https://thegbguy.github.io/sana-closet/
+display_url: https://thegbguy.github.io/sana-closet/
+logo_url: https://thegbguy.github.io/sana-closet/favicon.svg
+
+media_folder: public/uploads
+public_folder: /uploads
+
+# Photos are converted to WebP and shrunk on upload, so phone photos are fine.
+media_libraries:
+  default:
+    config:
+      max_file_size: 15000000
+      transformations:
+        raster_image:
+          format: webp
+          quality: 82
+          width: 1600
+          height: 2400
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  # ------------------------------------------------------------------ LOOKS
+  - name: looks
+    label: Looks
+    label_singular: Look
+    description: Outfits. Each look has photos and the pieces in it. Newest looks show first on the home page.
+    folder: src/content/looks
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    slug: '{{title}}'
+    identifier_field: title
+    summary: '{{title}} · {{occasion}}{{hidden | ternary(" · hidden", "")}}'
+    thumbnail: photos.*
+    preview_path: look/{{slug}}/
+    sortable_fields: [date, title, occasion]
+    view_groups:
+      - { label: Occasion, field: occasion }
+    fields:
+      - { name: title, label: Title, widget: string, hint: 'Short and pretty, e.g. “Minimal chic”.' }
+      - name: italic
+        label: Word in italics
+        widget: string
+        required: false
+        hint: 'Optional. A word from the title shown in italics, e.g. “chic”.'
+      - name: occasion
+        label: Occasion
+        widget: select
+        options: ['Date night', 'Wedding guest', 'Everyday', 'Evening', 'Holiday', 'Sleep & lounge', 'Halloween']
+      - name: photos
+        label: Photos
+        widget: image
+        multiple: true
+        min: 1
+        max: 6
+        hint: 'The first photo is the cover. Use your pin image or an outfit photo.'
+      - name: pieces
+        label: Pieces in this look
+        widget: relation
+        collection: products
+        multiple: true
+        required: false
+        value_field: '{{slug}}'
+        display_fields: ['{{title}} · {{brand}} · {{price_band}}']
+        search_fields: [title, brand, category]
+        hint: 'Pick from your Products. Missing one? Add it under Products first.'
+      - name: note
+        label: Short note
+        widget: text
+        required: false
+        hint: 'One or two lines under the title.'
+      - name: date
+        label: Date
+        widget: datetime
+        type: date
+        default: '{{now}}'
+        hint: 'Newest first. Change the date to move a look up or down.'
+      - { name: featured, label: Pin to the top, widget: boolean, default: false, required: false }
+      - { name: hidden, label: Hide from site, widget: boolean, default: false, required: false }
+      - name: tags
+        label: Tags
+        widget: list
+        required: false
+        hint: 'Optional. Add an edit’s tag (e.g. halloween) to put this look in that edit.'
+
+  # ---------------------------------------------------------------- PRODUCTS
+  - name: products
+    label: Products
+    label_singular: Product
+    description: Every Amazon find, entered once. Pick them inside Looks.
+    folder: src/content/products
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    slug: '{{title}}'
+    identifier_field: title
+    summary: '{{title}} · {{price_band}}{{hidden | ternary(" · hidden", "")}}'
+    thumbnail: photo
+    sortable_fields: [title, category, price_band]
+    view_groups:
+      - { label: Category, field: category }
+      - { label: Price band, field: price_band }
+    fields:
+      - { name: title, label: Name, widget: string, hint: 'Short and clear, e.g. “Ruffle peplum top”. Not the long Amazon title.' }
+      - { name: brand, label: Brand, widget: string, required: false }
+      - name: link
+        label: Amazon link
+        widget: string
+        type: url
+        pattern: ['^https://(link\.amazon|amzn\.to|www\.amazon\.com\.au)/', 'Paste your Amazon affiliate link (from SiteStripe or the Amazon app).']
+      - name: price_band
+        label: Price band
+        widget: select
+        options: ['Under $20', 'Under $30', '$30–50', '$50+']
+      - name: category
+        label: Category
+        widget: select
+        options: ['Dresses', 'Tops', 'Bottoms', 'Bags', 'Accessories', 'Sleepwear', 'Beauty', 'Home', 'Costumes']
+      - name: photo
+        label: Photo
+        widget: image
+        required: false
+        hint: 'Optional. Your own photo or a crop of your pin. Don’t upload Amazon’s product images.'
+      - name: tags
+        label: Tags
+        widget: list
+        required: false
+        hint: 'Optional. Add an edit’s tag (e.g. looks-expensive) to put this piece in that edit.'
+      - { name: hidden, label: Hide from site (out of stock), widget: boolean, default: false, required: false }
+
+  # ------------------------------------------------------------------ EDITS
+  - name: edits
+    label: Edits
+    label_singular: Edit
+    description: Themed collections on the home page. Anything with the edit’s tag shows up in it. “Under $30” is automatic.
+    folder: src/content/edits
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    slug: '{{title}}'
+    identifier_field: title
+    preview_path: edit/{{slug}}/
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: italic, label: Word in italics, widget: string, required: false }
+      - name: tag
+        label: Tag
+        widget: string
+        hint: 'Lowercase, no spaces, e.g. halloween. Add the same tag to products or looks.'
+      - { name: cover, label: Cover photo, widget: image }
+      - { name: order, label: Order on home page, widget: number, value_type: int, default: 10 }

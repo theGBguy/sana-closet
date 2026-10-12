@@ -1,0 +1,90 @@
+---
+import Base from '../../layouts/Base.astro';
+import LookCard from '../../components/LookCard.astro';
+import Title from '../../components/Title.astro';
+import Heart from '../../components/Heart.astro';
+import { getLooks, url, occasionSlug, type ResolvedLook } from '../../lib/data';
+
+export async function getStaticPaths() {
+  const looks = await getLooks();
+  return looks.map((look) => ({ params: { slug: look.id }, props: { look, all: looks } }));
+}
+interface Props { look: ResolvedLook; all: ResolvedLook[] }
+const { look: L, all } = Astro.props;
+const d = L.data;
+const n = L.items.length;
+const more = [...all.filter((l) => l.id !== L.id && l.data.occasion === d.occasion), ...all.filter((l) => l.id !== L.id && l.data.occasion !== d.occasion)].slice(0, 4);
+---
+<Base title={d.title} description={d.note ?? `${d.title}: ${n} piece${n === 1 ? '' : 's'} to shop on Amazon AU.`} image={d.photos[0]}>
+  <div class="wrap"><a class="crumb label" href={url('/')}>← The closet</a></div>
+  <section class="wrap look-page">
+    <div class="gallery">
+      <div class="main"><img id="mainImg" src={url(d.photos[0])} alt={d.title} /></div>
+      {d.photos.length > 1 && (
+        <div class="thumbs">
+          {d.photos.map((p, i) => (
+            <button type="button" data-img={url(p)} aria-current={String(i === 0)} aria-label={`View image ${i + 1}`}><img src={url(p)} alt="" /></button>
+          ))}
+        </div>
+      )}
+    </div>
+    <div>
+      <div class="look-head">
+        <a class="label" href={url(`/occasion/${occasionSlug(d.occasion)}/`)}>{d.occasion}{n > 0 && ` · ${n} piece${n > 1 ? 's' : ''}`}</a>
+        <h1><Title text={d.title} italic={d.italic} /></h1>
+        {d.note && <p>{d.note}</p>}
+        <div class="look-actions">
+          <button class="save-look label" type="button" data-save={`look:${L.id}`} aria-pressed="false"><Heart /><span>Save the look</span></button>
+        </div>
+      </div>
+      {n > 0 && (
+        <div class="pieces" id="pieces">
+          <div class="pieces-head"><span class="label">Shop the look</span><span class="label muted">Amazon AU</span></div>
+          {L.items.map((p, i) => (
+            <div class:list={['piece', { 'no-th': !p.data.photo }]}>
+              <span class="n">{i + 1}</span>
+              {p.data.photo && <div class="th"><img src={url(p.data.photo)} alt={p.data.title} loading="lazy" /></div>}
+              <div>
+                {p.data.brand && <div class="brand">{p.data.brand}</div>}
+                <h3>{p.data.title}</h3>
+                <span class="tag">{p.data.price_band}</span>
+                <div class="row">
+                  <a class="shop" href={p.data.link} target="_blank" rel="nofollow sponsored noopener" data-out={p.id}>Shop on Amazon ↗</a>
+                  <button class="mini-heart" type="button" data-save={`item:${p.id}`} aria-pressed="false" aria-label={`Save ${p.data.title}`}><Heart /></button>
+                </div>
+              </div>
+            </div>
+          ))}
+          <p class="note">Price bands are a guide. Amazon shows the current price.</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  {more.length > 0 && (
+    <section class="wrap sec">
+      <div class="sec-head"><h2>More <em>looks</em></h2><a class="label" href={url('/looks/')}>See all</a></div>
+      <div class="masonry">{more.map((l) => <LookCard look={l} />)}</div>
+    </section>
+  )}
+
+  {n > 0 && (
+    <div class="stickybuy" id="stickybuy">
+      <span class="t">{d.title}<br /><span class="label muted" style="font-size:10px">{n} piece{n > 1 ? 's' : ''} · {L.band}</span></span>
+      <a class="shop" href="#pieces" id="toPieces">Shop the look</a>
+    </div>
+  )}
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.thumbs button').forEach((b) => b.addEventListener('click', () => {
+    (document.getElementById('mainImg') as HTMLImageElement).src = b.dataset.img!;
+    document.querySelectorAll('.thumbs button').forEach((x) => x.setAttribute('aria-current', String(x === b)));
+  }));
+  const sb = document.getElementById('stickybuy');
+  const pc = document.getElementById('pieces');
+  if (sb && pc) {
+    new IntersectionObserver(([e]) => sb.classList.toggle('show', !e.isIntersecting && e.boundingClientRect.top > 0)).observe(pc);
+    document.getElementById('toPieces')!.addEventListener('click', (ev) => { ev.preventDefault(); pc.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  }
+</script>

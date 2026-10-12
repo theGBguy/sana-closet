@@ -1,0 +1,21 @@
+---
+import Heart from './Heart.astro';
+import { url, type Product } from '../lib/data';
+interface Props { product: Product }
+const { product: p } = Astro.props;
+const d = p.data;
+---
+<div class="pcard reveal">
+  {d.photo ? (
+    <div class="ph"><img src={url(d.photo)} alt={d.title} loading="lazy" decoding="async" /></div>
+  ) : (
+    <div class="ph text"><b>{d.title}</b><span class="label">{d.category}</span></div>
+  )}
+  <div class="brand">{d.brand}</div>
+  <h3>{d.title}</h3>
+  <span class="tag" style="align-self:flex-start">{d.price_band}</span>
+  <div class="row">
+    <a class="shop" href={d.link} target="_blank" rel="nofollow sponsored noopener" data-out={p.id}>Shop on Amazon ↗</a>
+    <button class="mini-heart" type="button" data-save={`item:${p.id}`} aria-pressed="false" aria-label={`Save ${d.title}`}><Heart /></button>
+  </div>
+</div>
