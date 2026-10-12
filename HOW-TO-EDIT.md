@@ -1,7 +1,7 @@
 # Managing Sana's closet
 
-**Site:** https://chiranjeevipandey.com.np/sana-closet/
-**Admin:** https://chiranjeevipandey.com.np/sana-closet/admin/
+**Site:** https://sana-closet.pages.dev/
+**Admin:** https://sana-closet.pages.dev/admin/
 
 Changes go live about 1–2 minutes after you press **Save**.
 

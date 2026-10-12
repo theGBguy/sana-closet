@@ -1,10 +1,9 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-// GitHub Pages project site. The account's Pages domain (chiranjeevipandey.com.np) serves it at /sana-closet/
-// When a custom domain is added: set `site` to it and remove `base`.
+// Hosted on Cloudflare Pages (project "sana-closet"), auto-built on every push to main.
+// When a custom domain is added, change `site` to it.
 export default defineConfig({
-  site: 'https://chiranjeevipandey.com.np',
-  base: '/sana-closet',
+  site: 'https://sana-closet.pages.dev',
   trailingSlash: 'ignore',
 });
