@@ -1,0 +1,16 @@
+# Cloudflare Pages builds the site. This just tells it to rebuild after every push
+# (including saves from the admin page). The hook URL is a repo secret.
+name: Trigger Cloudflare Pages build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS -X POST "$HOOK" > /dev/null
+        env:
+          HOOK: ${{ secrets.CF_PAGES_DEPLOY_HOOK }}
