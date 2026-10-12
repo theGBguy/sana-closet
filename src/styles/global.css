@@ -135,9 +135,9 @@ header.top.scrolled { border-color: var(--line) }
 .edit .cap span { display: inline-block; margin-top: 10px; padding-bottom: 3px; border-bottom: 1px solid currentColor }
 
 /* ---------- Product cards ---------- */
-.products { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 12px }
-@media (min-width: 760px) { .products { grid-template-columns: repeat(3, 1fr); gap: 32px 18px } }
-@media (min-width: 1080px) { .products { grid-template-columns: repeat(4, 1fr) } }
+.products { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 12px }
+@media (min-width: 760px) { .products { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 18px } }
+@media (min-width: 1080px) { .products { grid-template-columns: repeat(4, minmax(0, 1fr)) } }
 .pcard { position: relative; display: flex; flex-direction: column }
 .pcard .ph { position: relative; aspect-ratio: 3/4; overflow: hidden; background: var(--paper-2) }
 .pcard .ph img { width: 100%; height: 100%; object-fit: cover }
@@ -146,8 +146,9 @@ header.top.scrolled { border-color: var(--line) }
 .pcard .ph.text .label { margin-top: 10px; color: var(--muted) }
 .pcard .brand { margin-top: 10px; font-size: 11.5px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; min-height: 1em }
 .pcard h3 { margin: 3px 0 8px; font: 500 18px/1.15 var(--serif) }
-.pcard .row { display: flex; align-items: center; gap: 4px; margin-top: auto; padding-top: 10px }
-.pcard .row .shop { flex: 1; height: 40px; padding: 0 10px; font-size: 11px }
+.pcard .shop { margin-top: auto; height: 40px; padding: 0 10px; font-size: 11px; letter-spacing: .08em }
+.pcard .tag { margin-bottom: 12px }
+.pcard .heart { top: 8px; right: 8px }
 
 /* ---------- Look page ---------- */
 .crumb { display: inline-flex; align-items: center; gap: 8px; height: 44px }
