@@ -6,5 +6,7 @@ price_band: "Under $30"
 category: Dresses
 photo: /uploads/p-one-shoulder-evening-dress.webp
 tags: [looks-expensive]
+pairs_with:
+  - y2k-shoulder-clutch
 hidden: false
 ---

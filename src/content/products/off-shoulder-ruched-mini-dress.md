@@ -6,5 +6,7 @@ price_band: "Under $30"
 category: Dresses
 photo: /uploads/p-off-shoulder-ruched-mini-dress.webp
 tags: []
+pairs_with:
+  - y2k-shoulder-clutch
 hidden: false
 ---

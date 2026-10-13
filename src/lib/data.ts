@@ -71,3 +71,15 @@ export async function under30() {
 
 export const occasionSlug = (o: string) => slugify(o);
 export const categorySlug = (c: string) => slugify(c);
+
+/** Products suggested to go with `p`: hidden, unknown and self references are dropped. */
+export async function getPairs(p: Product, exclude: string[] = []): Promise<Product[]> {
+  const byId = new Map((await getProducts()).map((x) => [x.id, x]));
+  const seen = new Set<string>([p.id, ...exclude]);
+  const out: Product[] = [];
+  for (const id of p.data.pairs_with ?? []) {
+    const hit = byId.get(id);
+    if (hit && !seen.has(hit.id)) { seen.add(hit.id); out.push(hit); }
+  }
+  return out;
+}

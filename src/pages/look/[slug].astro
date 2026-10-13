@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import LookCard from '../../components/LookCard.astro';
 import Title from '../../components/Title.astro';
 import Heart from '../../components/Heart.astro';
-import { getLooks, url, occasionSlug, type ResolvedLook } from '../../lib/data';
+import { getLooks, getPairs, url, occasionSlug, type ResolvedLook } from '../../lib/data';
 
 export async function getStaticPaths() {
   const looks = await getLooks();
@@ -13,6 +13,8 @@ interface Props { look: ResolvedLook; all: ResolvedLook[] }
 const { look: L, all } = Astro.props;
 const d = L.data;
 const n = L.items.length;
+const pieceIds = L.items.map((p) => p.id);
+const pairsFor = await Promise.all(L.items.map((p) => getPairs(p, pieceIds)));
 const more = [...all.filter((l) => l.id !== L.id && l.data.occasion === d.occasion), ...all.filter((l) => l.id !== L.id && l.data.occasion !== d.occasion)].slice(0, 4);
 ---
 <Base title={d.title} description={d.note ?? `${d.title}: ${n} piece${n === 1 ? '' : 's'} to shop on Amazon AU.`} image={d.photos[0]}>
@@ -52,6 +54,19 @@ const more = [...all.filter((l) => l.id !== L.id && l.data.occasion === d.occasi
                   <a class="shop" href={p.data.link} target="_blank" rel="nofollow sponsored noopener" data-out={p.id}>Shop on Amazon ↗</a>
                   <button class="mini-heart" type="button" data-save={`item:${p.id}`} aria-pressed="false" aria-label={`Save ${p.data.title}`}><Heart /></button>
                 </div>
+                {pairsFor[i].length > 0 && (
+                  <div class="pairs">
+                    <span class="label muted">Pairs with</span>
+                    {pairsFor[i].map((q) => (
+                      <div class:list={['pair', { 'no-th': !q.data.photo }]}>
+                        {q.data.photo && <div class="th"><img src={url(q.data.photo)} alt="" loading="lazy" /></div>}
+                        <span class="t">{q.data.title}</span>
+                        <span class="b">{q.data.price_band}</span>
+                        <a href={q.data.link} target="_blank" rel="nofollow sponsored noopener" data-out={q.id}>Shop ↗</a>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           ))}

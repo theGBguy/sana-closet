@@ -1,9 +1,10 @@
 ---
 import Heart from './Heart.astro';
-import { url, type Product } from '../lib/data';
+import { url, getPairs, type Product } from '../lib/data';
 interface Props { product: Product }
 const { product: p } = Astro.props;
 const d = p.data;
+const pairs = await getPairs(p);
 ---
 <div class="pcard reveal">
   {d.photo ? (
@@ -16,4 +17,7 @@ const d = p.data;
   <h3>{d.title}</h3>
   <span class="tag" style="align-self:flex-start">{d.price_band}</span>
   <a class="shop" href={d.link} target="_blank" rel="nofollow sponsored noopener" data-out={p.id}>Shop on Amazon ↗</a>
+  {pairs.length > 0 && (
+    <p class="pairs-line">Pairs with <a href={pairs[0].data.link} target="_blank" rel="nofollow sponsored noopener">{pairs[0].data.title} ↗</a>{pairs.length > 1 && <span> +{pairs.length - 1}</span>}</p>
+  )}
 </div>

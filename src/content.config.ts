@@ -13,6 +13,7 @@ const products = defineCollection({
     category: z.enum(CATEGORIES),
     photo: z.string().optional().nullable(),
     tags: z.array(z.string()).optional().nullable().default([]),
+    pairs_with: z.array(z.string()).optional().nullable().default([]),
     hidden: z.boolean().optional().default(false),
   }),
 });

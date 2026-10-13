@@ -137,6 +137,17 @@ collections:
         label: Category
         widget: select
         options: ['Dresses', 'Tops', 'Bottoms', 'Bags', 'Accessories', 'Sleepwear', 'Beauty', 'Home', 'Costumes']
+      - name: pairs_with
+        label: Pairs with
+        widget: relation
+        collection: products
+        multiple: true
+        required: false
+        max: 4
+        value_field: '{{slug}}'
+        display_fields: ['{{title}} · {{brand}} · {{price_band}}']
+        search_fields: [title, brand, category]
+        hint: 'Optional. Matching pieces to suggest with this one, e.g. heels for a dress.'
       - name: photo
         label: Photo
         widget: image

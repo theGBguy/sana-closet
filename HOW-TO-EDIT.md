@@ -32,6 +32,14 @@ Then press **Save**.
 3. Under **Pieces in this look**, pick from your products. Type to search.
 4. Press **Save**. New looks appear at the top of the home page.
 
+## Suggest matching pieces
+
+1. Open a product (e.g. a dress).
+2. In **Pairs with**, type to search and pick up to 4 other products, e.g. heels or a bag.
+3. Press **Save**. The pairing shows under the piece on look pages and under the product in the shop.
+
+Missing the matching piece? Add it under Products first. Don't pick the product itself.
+
 ## Everyday changes
 
 | What happened | What to do |
