@@ -1,5 +1,5 @@
 ---
-title: Cute Fruit Print Cotton Gauze Pajama Set
+title: Cotton Gauze Pajama Set
 brand: PAGEPX
 link: https://link.amazon/B0bt6UyB2
 price_band: $30–50
