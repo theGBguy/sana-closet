@@ -1,9 +1,11 @@
 ---
-title: "Pumpkin string lights"
-brand: "Fyvadio"
+title: Pumpkin string lights
+brand: Fyvadio
 link: https://link.amazon/B02GbJwXd
-price_band: "Under $20"
+price_band: Under $20
 category: Home
-tags: [halloween]
+photo: /uploads/pasted-image-1791869753870.webp
+tags:
+  - halloween
 hidden: false
 ---
