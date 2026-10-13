@@ -1,9 +1,11 @@
 ---
-title: "Inflatable octopus costume"
-brand: ""
+title: Inflatable octopus costume
+brand: ''
 link: https://link.amazon/B0hlpDaOk
-price_band: "$30\u201350"
+price_band: $30–50
 category: Costumes
-tags: [halloween]
+photo: /uploads/pasted-image-1791869617441.webp
+tags:
+  - halloween
 hidden: false
 ---
