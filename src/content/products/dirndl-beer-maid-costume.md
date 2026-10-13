@@ -1,9 +1,11 @@
 ---
-title: "Dirndl beer maid costume"
-brand: ""
+title: Dirndl beer maid costume
+brand: ''
 link: https://link.amazon/B06BOCOzM
-price_band: "$30\u201350"
+price_band: $30–50
 category: Costumes
-tags: [halloween]
+photo: /uploads/71Nol1oz1KL._AC_SX679_.webp
+tags:
+  - halloween
 hidden: false
 ---
