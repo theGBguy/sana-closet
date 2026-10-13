@@ -180,13 +180,13 @@ header.top.scrolled { border-color: var(--line) }
 .piece .row { display: flex; align-items: center; gap: 6px; margin-top: 12px }
 .piece .row .shop { flex: 1; padding: 0 12px }
 .pairs { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--line) }
-.pair { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 8px 0 0 }
-.pair.no-th { grid-template-columns: minmax(0, 1fr) auto auto }
-.pair .th { width: 32px; aspect-ratio: 3/4; overflow: hidden; background: var(--paper-2) }
+.pair { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; grid-template-areas: "th t a" "th b a"; column-gap: 10px; row-gap: 3px; align-items: center; padding: 8px 0 0 }
+.pair.no-th { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "t a" "b a" }
+.pair .th { grid-area: th; width: 32px; aspect-ratio: 3/4; overflow: hidden; background: var(--paper-2) }
 .pair .th img { width: 100%; height: 100%; object-fit: cover }
-.pair .t { font: 500 15px/1.2 var(--serif); min-width: 0; overflow-wrap: anywhere }
-.pair .b { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); white-space: nowrap }
-.pair a { font: 500 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; padding: 8px 0 8px 4px; white-space: nowrap }
+.pair .t { grid-area: t; font: 500 15px/1.2 var(--serif); min-width: 0 }
+.pair .b { grid-area: b; align-self: start; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); white-space: nowrap }
+.pair a { grid-area: a; font: 500 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; padding: 8px 0 8px 4px; white-space: nowrap }
 .pairs-line { margin: 8px 0 0; font-size: 12px; line-height: 1.35; color: var(--muted) }
 .pairs-line a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; overflow-wrap: anywhere }
 .shop { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 18px; background: var(--ink); color: var(--paper); font: 500 12px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; transition: background .2s }
