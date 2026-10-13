@@ -48,17 +48,17 @@ const BASE = url('/');
 <body data-base={BASE}>
   {intro && (
     <div class="doors" id="doors" aria-hidden="true">
-      <div class="door l"><div class="mark"><b>SANA</b><span class="label muted">The Closet</span></div><i class="knob"></i></div>
-      <div class="door r"><div class="mark"><b>SANA</b><span class="label muted">The Closet</span></div><i class="knob"></i></div>
+      <div class="door l"><div class="mark"><b>SANA</b><span class="label muted">Style, Beauty &amp; Finds</span></div><i class="knob"></i></div>
+      <div class="door r"><div class="mark"><b>SANA</b><span class="label muted">Style, Beauty &amp; Finds</span></div><i class="knob"></i></div>
       <div class="skip label">Tap to open</div>
     </div>
   )}
 
   <header class="top" id="top">
     <div class="wrap bar">
-      <a href={BASE} class="word" aria-label="SANA home">SANA</a>
+      <a href={BASE} class="brand" aria-label="SANA | Style, Beauty & Finds, home"><span class="word">SANA</span><span class="brand-sub">Style, Beauty &amp; Finds</span></a>
       <button class="closet-btn" id="openCloset" type="button" aria-label="My closet">
-        <span class="label">My Closet</span>
+        <span class="label closet-label">My Closet</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"/></svg>
         <span class="count" id="count">0</span>
       </button>
@@ -69,12 +69,11 @@ const BASE = url('/');
 
   <footer>
     <div class="wrap">
-      <div class="word">SANA</div>
+      <div class="brand"><span class="word">SANA</span><span class="brand-sub">Style, Beauty &amp; Finds</span></div>
       <div class="row">
         <a href="https://www.pinterest.com/sanastylebeauty/" target="_blank" rel="noopener">@sanastylebeauty</a>
         <a href={url('/shop/')}>Shop all</a>
         <a href={url('/edit/under-30/')}>Under $30</a>
-        {intro && <a href="#" id="replay">Replay intro</a>}
       </div>
       <p>As an Amazon Associate I earn from qualifying purchases. Links on this site go to Amazon.com.au; I may earn a small commission at no extra cost to you.</p>
       <p>Price bands are a guide. The current price is the one shown on Amazon.</p>
@@ -179,7 +178,6 @@ const BASE = url('/');
       setTimeout(open, 450);
     }
     playDoors();
-    document.getElementById('replay')?.addEventListener('click', (e) => { e.preventDefault(); root.classList.add('doors-on'); setTimeout(playDoors, 30); });
   </script>
 </body>
 </html>

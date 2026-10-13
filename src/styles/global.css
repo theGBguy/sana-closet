@@ -53,6 +53,10 @@ header.top { position: sticky; top: 0; z-index: 20; background: rgba(246, 241, 2
 header.top.scrolled { border-color: var(--line) }
 .bar { display: flex; align-items: center; justify-content: space-between; height: 60px }
 .word { font: 500 26px/1 var(--serif); letter-spacing: .3em }
+.brand { display: flex; align-items: center; min-width: 0 }
+.brand .word { margin-right: -.3em }
+.brand-sub { font: 500 10.5px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); white-space: nowrap; margin-left: 14px; padding-left: 14px; border-left: 1px solid var(--line); line-height: 18px }
+@media (max-width: 420px) { .closet-label { display: none } .brand .word { font-size: 23px } .brand-sub { font-size: 9.5px; letter-spacing: .1em; margin-left: 10px; padding-left: 10px } }
 .closet-btn { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 2px }
 .closet-btn svg { width: 20px; height: 20px }
 .count { font: 500 12px/1 var(--sans); min-width: 12px }
@@ -221,6 +225,7 @@ header.top.scrolled { border-color: var(--line) }
 /* ---------- Footer ---------- */
 footer { padding-block: 40px calc(40px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); margin-top: 20px; color: var(--muted); font-size: 13px }
 footer .word { font-size: 20px; color: var(--ink) }
+footer .brand-sub { font-size: 9.5px }
 footer .row { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 16px 0 }
 footer .row a { color: var(--ink); border-bottom: 1px solid var(--line) }
 footer p { margin: 6px 0; max-width: 62ch }
