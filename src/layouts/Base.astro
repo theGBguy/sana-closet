@@ -10,7 +10,7 @@ const {
   image,
   intro = false,
 } = Astro.props;
-const fullTitle = title ? `${title} · SANA` : 'SANA · Style, Beauty & Finds';
+const fullTitle = title ? `${title} | SANA` : 'SANA | Style, Beauty & Finds';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(url(image), Astro.site).href : undefined;
 const BASE = url('/');
@@ -24,6 +24,7 @@ const BASE = url('/');
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="SANA | Style, Beauty & Finds">
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
   {ogImage && <meta property="og:image" content={ogImage} />}
@@ -70,7 +71,7 @@ const BASE = url('/');
     <div class="wrap">
       <div class="word">SANA</div>
       <div class="row">
-        <a href="https://www.pinterest.com/sanastylebeauty/" target="_blank" rel="noopener">Pinterest</a>
+        <a href="https://www.pinterest.com/sanastylebeauty/" target="_blank" rel="noopener">@sanastylebeauty</a>
         <a href={url('/shop/')}>Shop all</a>
         <a href={url('/edit/under-30/')}>Under $30</a>
         {intro && <a href="#" id="replay">Replay intro</a>}

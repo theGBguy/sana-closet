@@ -1,7 +1,7 @@
 # Managing Sana's closet
 
-**Site:** https://sana-closet.pages.dev/
-**Admin:** https://sana-closet.pages.dev/admin/
+**Site:** https://sanastylebeauty.pages.dev/
+**Admin:** https://sanastylebeauty.pages.dev/admin/
 
 Changes go live about 1–2 minutes after you press **Save**.
 
