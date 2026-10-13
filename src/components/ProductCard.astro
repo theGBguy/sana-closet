@@ -5,10 +5,11 @@ interface Props { product: Product }
 const { product: p } = Astro.props;
 const d = p.data;
 const pairs = await getPairs(p);
+import Pic from './Pic.astro';
 ---
 <div class="pcard reveal">
   {d.photo ? (
-    <div class="ph"><img src={url(d.photo)} alt={d.title} loading="lazy" decoding="async" /></div>
+    <div class="ph"><Pic src={d.photo} alt={d.title} sizes="(min-width: 1080px) 270px, (min-width: 760px) 33vw, 50vw" /></div>
   ) : (
     <div class="ph text"><b>{d.title}</b><span class="label">{d.category}</span></div>
   )}
@@ -18,6 +19,6 @@ const pairs = await getPairs(p);
   <span class="tag" style="align-self:flex-start">{d.price_band}</span>
   <a class="shop" href={d.link} target="_blank" rel="nofollow sponsored noopener" data-out={p.id}>Shop on Amazon ↗</a>
   {pairs.length > 0 && (
-    <p class="pairs-line">Pairs with <a href={pairs[0].data.link} target="_blank" rel="nofollow sponsored noopener">{pairs[0].data.title} ↗</a>{pairs.length > 1 && <span> +{pairs.length - 1}</span>}</p>
+    <p class="pairs-line">Pairs with <a href={pairs[0].data.link} target="_blank" rel="nofollow sponsored noopener" data-out={pairs[0].id}>{pairs[0].data.title} ↗</a>{pairs.length > 1 && <span> +{pairs.length - 1}</span>}</p>
   )}
 </div>

@@ -12,7 +12,9 @@ const {
 } = Astro.props;
 const fullTitle = title ? `${title} | SANA` : 'SANA | Style, Beauty & Finds';
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const ogImage = image ? new URL(url(image), Astro.site).href : undefined;
+// Pages without their own photo share the branded preview card (public/og.jpg, made from design/og.html).
+const ogPath = image?.startsWith('/uploads/') ? image.replace(/^\/uploads\/(.+)\.[^.]+$/, '/uploads/_og/$1.jpg') : image;
+const ogImage = new URL(url(ogPath ?? '/og.jpg'), Astro.site).href;
 const BASE = url('/');
 ---
 <!doctype html>
@@ -27,7 +29,11 @@ const BASE = url('/');
   <meta property="og:site_name" content="SANA | Style, Beauty & Finds">
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
-  {ogImage && <meta property="og:image" content={ogImage} />}
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  {!image && <meta property="og:image:width" content="1200" />}
+  {!image && <meta property="og:image:height" content="630" />}
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="theme-color" content="#F6F1EA" />
   <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
   <script is:inline>document.documentElement.classList.remove('no-js');</script>
@@ -132,7 +138,7 @@ const BASE = url('/');
         }
         const p = d.products[id]; if (!p) return '';
         const th = p.img ? `<img src="${asset(p.img)}" alt="">` : esc(p.t.charAt(0));
-        return `<div class="saved"><div class="th">${th}</div><div><span class="label muted">${esc(p.band)}</span><h3>${esc(p.t)}</h3><div class="row"><a class="shop" style="height:36px;padding:0 14px" href="${esc(p.link)}" target="_blank" rel="nofollow sponsored noopener">Shop ↗</a><button class="rm" type="button" data-save="${k}">Remove</button></div></div></div>`;
+        return `<div class="saved"><div class="th">${th}</div><div><span class="label muted">${esc(p.band)}</span><h3>${esc(p.t)}</h3><div class="row"><a class="shop" style="height:36px;padding:0 14px" href="${esc(p.link)}" target="_blank" rel="nofollow sponsored noopener" data-out="${esc(id)}">Shop ↗</a><button class="rm" type="button" data-save="${k}">Remove</button></div></div></div>`;
       }).join('');
     }
 
@@ -146,6 +152,13 @@ const BASE = url('/');
     addEventListener('keydown', (e) => { if (e.key === 'Escape') closeCloset(); });
 
     document.addEventListener('click', (e) => {
+      // Count clicks on Amazon links (no cookies; see functions/api/click.js)
+      const out = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-out]');
+      if (out) {
+        const m = location.pathname.match(/^\/look\/([^/]+)/);
+        const payload = JSON.stringify({ p: out.dataset.out, l: m ? m[1] : null, path: location.pathname });
+        try { navigator.sendBeacon('/api/click', new Blob([payload], { type: 'application/json' })); } catch {}
+      }
       const s = (e.target as HTMLElement).closest<HTMLElement>('[data-save]');
       if (s) { e.preventDefault(); e.stopPropagation(); toggle(s.dataset.save!, s); }
     });

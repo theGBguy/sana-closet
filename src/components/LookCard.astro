@@ -4,10 +4,11 @@ import { url, type ResolvedLook } from '../lib/data';
 interface Props { look: ResolvedLook; eager?: boolean }
 const { look, eager = false } = Astro.props;
 const n = look.items.length;
+import Pic from './Pic.astro';
 ---
 <a class="look reveal" href={url(`/look/${look.id}/`)}>
   <div class="ph">
-    <img src={url(look.data.photos[0])} alt={look.data.title} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    <Pic src={look.data.photos[0]} alt={look.data.title} eager={eager} sizes="(min-width: 1080px) 270px, (min-width: 760px) 33vw, 50vw" />
     {look.band && <span class="tag">{look.band}</span>}
   </div>
   <button class="heart" type="button" data-save={`look:${look.id}`} aria-pressed="false" aria-label={`Save ${look.data.title}`}><Heart /></button>

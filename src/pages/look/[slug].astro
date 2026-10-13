@@ -16,16 +16,17 @@ const n = L.items.length;
 const pieceIds = L.items.map((p) => p.id);
 const pairsFor = await Promise.all(L.items.map((p) => getPairs(p, pieceIds)));
 const more = [...all.filter((l) => l.id !== L.id && l.data.occasion === d.occasion), ...all.filter((l) => l.id !== L.id && l.data.occasion !== d.occasion)].slice(0, 4);
+import Pic from '../../components/Pic.astro';
 ---
 <Base title={d.title} description={d.note ?? `${d.title}: ${n} piece${n === 1 ? '' : 's'} to shop on Amazon AU.`} image={d.photos[0]}>
   <div class="wrap"><a class="crumb label" href={url('/')}>← The closet</a></div>
   <section class="wrap look-page">
     <div class="gallery">
-      <div class="main"><img id="mainImg" src={url(d.photos[0])} alt={d.title} /></div>
+      <div class="main"><Pic id="mainImg" src={d.photos[0]} alt={d.title} eager sizes="(min-width: 900px) 52vw, 100vw" /></div>
       {d.photos.length > 1 && (
         <div class="thumbs">
           {d.photos.map((p, i) => (
-            <button type="button" data-img={url(p)} aria-current={String(i === 0)} aria-label={`View image ${i + 1}`}><img src={url(p)} alt="" /></button>
+            <button type="button" data-img={url(p)} aria-current={String(i === 0)} aria-label={`View image ${i + 1}`}><Pic src={p} sizes="64px" /></button>
           ))}
         </div>
       )}
@@ -45,7 +46,7 @@ const more = [...all.filter((l) => l.id !== L.id && l.data.occasion === d.occasi
           {L.items.map((p, i) => (
             <div class:list={['piece', { 'no-th': !p.data.photo }]}>
               <span class="n">{i + 1}</span>
-              {p.data.photo && <div class="th"><img src={url(p.data.photo)} alt={p.data.title} loading="lazy" /></div>}
+              {p.data.photo && <div class="th"><Pic src={p.data.photo} alt={p.data.title} sizes="80px" /></div>}
               <div>
                 {p.data.brand && <div class="brand">{p.data.brand}</div>}
                 <h3>{p.data.title}</h3>
@@ -59,7 +60,7 @@ const more = [...all.filter((l) => l.id !== L.id && l.data.occasion === d.occasi
                     <span class="label muted">Pairs with</span>
                     {pairsFor[i].map((q) => (
                       <div class:list={['pair', { 'no-th': !q.data.photo }]}>
-                        {q.data.photo && <div class="th"><img src={url(q.data.photo)} alt="" loading="lazy" /></div>}
+                        {q.data.photo && <div class="th"><Pic src={q.data.photo} sizes="64px" /></div>}
                         <span class="t">{q.data.title}</span>
                         <span class="b">{q.data.price_band}</span>
                         <a href={q.data.link} target="_blank" rel="nofollow sponsored noopener" data-out={q.id}>Shop ↗</a>
@@ -93,7 +94,7 @@ const more = [...all.filter((l) => l.id !== L.id && l.data.occasion === d.occasi
 
 <script>
   document.querySelectorAll<HTMLButtonElement>('.thumbs button').forEach((b) => b.addEventListener('click', () => {
-    (document.getElementById('mainImg') as HTMLImageElement).src = b.dataset.img!;
+    const m = document.getElementById('mainImg') as HTMLImageElement; m.removeAttribute('srcset'); m.style.backgroundColor = ''; m.src = b.dataset.img!;
     document.querySelectorAll('.thumbs button').forEach((x) => x.setAttribute('aria-current', String(x === b)));
   }));
   const sb = document.getElementById('stickybuy');

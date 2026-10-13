@@ -14,8 +14,9 @@ const occasions = OCCASIONS.map((o) => ({ name: o, cover: looks.find((l) => l.da
 const categories = CATEGORIES.map((c) => ({ name: c, n: products.filter((p) => p.data.category === c).length })).filter((c) => c.n);
 const cheapCover = looks.find((l) => l.band.includes('$20') || l.band.includes('$30'));
 const hanger = '<svg viewBox="0 0 72 34" fill="none" stroke="#6B5A4D" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M36 13c0-3 3-3.5 3-6.2A3 3 0 0 0 33.2 6"/><path d="M36 13 4 31h64z" stroke-linejoin="round"/></svg>';
+import Pic from '../components/Pic.astro';
 ---
-<Base intro image={latest[0]?.data.photos[0]}>
+<Base intro>
   <section class="wrap intro">
     <h1>Budget finds that look <em>way more expensive.</em></h1>
     <nav class="jump label" aria-label="Jump to">
@@ -34,7 +35,7 @@ const hanger = '<svg viewBox="0 0 72 34" fill="none" stroke="#6B5A4D" stroke-wid
       {occasions.map((o) => (
         <a class="hang" href={url(`/occasion/${occasionSlug(o.name)}/`)}>
           <span set:html={hanger} />
-          <div class="ph"><img src={url(o.cover!.data.photos[0])} alt="" loading="lazy" /></div>
+          <div class="ph"><Pic src={o.cover!.data.photos[0]} sizes="(min-width: 760px) 23vw, 46vw" /></div>
           <h3>{o.name}</h3>
         </a>
       ))}
@@ -53,13 +54,13 @@ const hanger = '<svg viewBox="0 0 72 34" fill="none" stroke="#6B5A4D" stroke-wid
     <div class="edits">
       {cheapCover && (
         <a class="edit reveal" href={url('/edit/under-30/')}>
-          <img src={url(cheapCover.data.photos[0])} alt="" loading="lazy" />
+          <Pic src={cheapCover.data.photos[0]} sizes="(min-width: 760px) 50vw, 100vw" />
           <div class="cap"><b>Under <em>$30</em></b><span class="label">Shop the edit</span></div>
         </a>
       )}
       {edits.map((e) => (
         <a class="edit reveal" href={url(`/edit/${e.id}/`)}>
-          <img src={url(e.data.cover)} alt="" loading="lazy" />
+          <Pic src={e.data.cover} sizes="(min-width: 760px) 50vw, 100vw" />
           <div class="cap"><b><Title text={e.data.title} italic={e.data.italic} /></b><span class="label">Shop the edit</span></div>
         </a>
       ))}
