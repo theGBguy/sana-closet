@@ -6,6 +6,7 @@ price_band: Under $30
 category: Costumes
 pairs_with: []
 photo: /uploads/pasted-image-1791956884808.webp
-tags: []
+tags:
+  - halloween edits
 hidden: false
 ---
